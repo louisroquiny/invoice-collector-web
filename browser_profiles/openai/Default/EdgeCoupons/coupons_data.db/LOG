@@ -1,5 +1,0 @@
-2026/05/20-16:28:01.246 3ac4 Creating DB D:\invoice-collector-web\browser_profiles\openai\Default\EdgeCoupons/coupons_data.db since it was missing.
-2026/05/20-16:28:01.271 3ac4 Reusing MANIFEST D:\invoice-collector-web\browser_profiles\openai\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
-2026/05/20-16:28:01.399 377c Level-0 table #5: started
-2026/05/20-16:28:01.421 377c Level-0 table #5: 682457 bytes OK
-2026/05/20-16:28:01.425 377c Delete type=0 #3

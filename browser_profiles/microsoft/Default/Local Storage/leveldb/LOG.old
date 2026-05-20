@@ -1,6 +1,0 @@
-2026/05/20-16:27:03.290 5544 Reusing MANIFEST D:\invoice-collector-web\browser_profiles\microsoft\Default\Local Storage\leveldb/MANIFEST-000001
-2026/05/20-16:27:03.302 5544 Recovering log #3
-2026/05/20-16:27:03.305 5544 Reusing old log D:\invoice-collector-web\browser_profiles\microsoft\Default\Local Storage\leveldb/000003.log 
-2026/05/20-16:27:57.642 a30 Level-0 table #5: started
-2026/05/20-16:27:57.662 a30 Level-0 table #5: 22030 bytes OK
-2026/05/20-16:27:57.667 a30 Delete type=0 #3

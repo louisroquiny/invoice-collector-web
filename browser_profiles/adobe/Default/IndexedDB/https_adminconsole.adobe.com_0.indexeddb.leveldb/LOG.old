@@ -1,3 +1,0 @@
-2026/05/20-16:21:58.380 6998 Creating DB D:\invoice-collector-web\browser_profiles\adobe\Default\IndexedDB\https_adminconsole.adobe.com_0.indexeddb.leveldb since it was missing.
-2026/05/20-16:21:58.411 6998 Reusing MANIFEST D:\invoice-collector-web\browser_profiles\adobe\Default\IndexedDB\https_adminconsole.adobe.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/05/20-16:21:59.833 5138 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
