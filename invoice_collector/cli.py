@@ -28,6 +28,12 @@ def collect(
     downloads: Path = typer.Option(Path("downloads"), "--downloads", "-d"),
     profiles: Path = typer.Option(Path("browser_profiles"), "--profiles", "-p"),
     manifest: Path = typer.Option(Path("reports/manifest.csv"), "--manifest", "-m"),
+    vendor: str | None = typer.Option(
+        None,
+        "--vendor",
+        "-v",
+        help="Limiter la collecte à un fournisseur: microsoft, openai, google, ovhcloud ou adobe.",
+    ),
     headless: bool = typer.Option(False, "--headless", help="À éviter au début à cause du MFA."),
     assume_logged_in: bool = typer.Option(
         False,
@@ -39,19 +45,31 @@ def collect(
     downloads.mkdir(parents=True, exist_ok=True)
     profiles.mkdir(parents=True, exist_ok=True)
 
+    if vendor is not None:
+        vendor = vendor.lower().strip()
+        if vendor not in VENDOR_MODULES:
+            supported = ", ".join(VENDOR_MODULES)
+            raise typer.BadParameter(f"Fournisseur non supporté: {vendor}. Valeurs: {supported}")
+        if vendor not in cfg["invoices"]:
+            raise typer.BadParameter(f"{vendor} n'existe pas dans {config}")
+
     results: list[CollectResult] = []
 
-    for vendor, vendor_cfg in cfg["invoices"].items():
-        if vendor not in VENDOR_MODULES:
-            results.append(CollectResult.error(vendor, "", f"Fournisseur non supporté: {vendor}"))
+    invoice_items = cfg["invoices"].items()
+    if vendor is not None:
+        invoice_items = [(vendor, cfg["invoices"][vendor])]
+
+    for vendor_name, vendor_cfg in invoice_items:
+        if vendor_name not in VENDOR_MODULES:
+            results.append(CollectResult.error(vendor_name, "", f"Fournisseur non supporté: {vendor_name}"))
             continue
 
-        module = importlib.import_module(VENDOR_MODULES[vendor])
+        module = importlib.import_module(VENDOR_MODULES[vendor_name])
         months = vendor_cfg.get("months", [])
 
         for period in months:
             ensure_period(period)
-            console.print(f"\n[bold]Collecte {vendor} {period}[/bold]")
+            console.print(f"\n[bold]Collecte {vendor_name} {period}[/bold]")
             try:
                 result = module.collect_invoice(
                     period=period,
@@ -62,7 +80,7 @@ def collect(
                     options=vendor_cfg,
                 )
             except Exception as exc:  # noqa: BLE001
-                result = CollectResult.error(vendor, period, str(exc))
+                result = CollectResult.error(vendor_name, period, str(exc))
             results.append(result)
             console.print(f"Statut: [bold]{result.status}[/bold] - {result.message}")
 
@@ -85,8 +103,8 @@ def init_profiles(
     profiles: Path = typer.Option(Path("browser_profiles"), "--profiles", "-p"),
 ):
     """Créer les dossiers de profils persistants pour connexion manuelle initiale."""
-    for vendor in VENDOR_MODULES:
-        (profiles / vendor).mkdir(parents=True, exist_ok=True)
+    for vendor_name in VENDOR_MODULES:
+        (profiles / vendor_name).mkdir(parents=True, exist_ok=True)
     console.print(f"Profils créés dans: [bold]{profiles}[/bold]")
 
 
