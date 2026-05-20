@@ -1,0 +1,5 @@
+2026/05/20-16:27:12.008 6d94 Creating DB D:\invoice-collector-web\browser_profiles\microsoft\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/05/20-16:27:12.048 6d94 Reusing MANIFEST D:\invoice-collector-web\browser_profiles\microsoft\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/05/20-16:27:12.169 1b38 Level-0 table #5: started
+2026/05/20-16:27:12.183 1b38 Level-0 table #5: 682457 bytes OK
+2026/05/20-16:27:12.185 1b38 Delete type=0 #3

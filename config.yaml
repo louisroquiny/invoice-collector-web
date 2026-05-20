@@ -1,0 +1,26 @@
+invoices:
+  microsoft:
+    url: "https://admin.microsoft.com/Adminportal/Home#/billoverview/invoice-list"
+    months:
+      - "2026-05"
+
+  openai:
+    url: "https://platform.openai.com/settings/organization/billing"
+    months:
+      - "2026-04"
+      - "2026-05"
+
+  google:
+    url: "https://console.cloud.google.com/billing"
+    months:
+      - "2026-04"
+
+  ovhcloud:
+    url: "https://www.ovh.com/manager/#/billing/history"
+    months:
+      - "2026-05"
+
+  adobe:
+    url: "https://adminconsole.adobe.com/"
+    months:
+      - "2026-05"

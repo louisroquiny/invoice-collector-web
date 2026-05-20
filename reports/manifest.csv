@@ -1,0 +1,16 @@
+vendor,period,status,file,sha256,message,collected_at
+microsoft,2026-05,missing,,,Aucune facture Microsoft trouvée automatiquement pour 2026-05. Le portail Microsoft varie selon le type de compte.,2026-05-20T16:33:51
+openai,2026-04,error,,,"Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to ""https://platform.openai.com/settings/organization/billing"", waiting until ""networkidle""
+",2026-05-20T16:33:51
+openai,2026-05,error,,,"Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to ""https://platform.openai.com/settings/organization/billing"", waiting until ""networkidle""
+",2026-05-20T16:33:51
+google,2026-04,missing,,,Aucune facture Google trouvée automatiquement pour 2026-04. Vérifiez si votre facture est dans Google Cloud Billing ou Google Workspace Admin.,2026-05-20T16:33:51
+ovhcloud,2026-05,missing,,,"Aucune facture OVHcloud trouvée automatiquement pour 2026-05. Pour OVHcloud, une intégration API sera plus robuste.",2026-05-20T16:33:51
+adobe,2026-05,error,,,"Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to ""https://adminconsole.adobe.com/"", waiting until ""networkidle""
+",2026-05-20T16:33:51
