@@ -1,0 +1,51 @@
+from pathlib import Path
+
+from playwright.sync_api import BrowserContext, Page, Playwright, sync_playwright
+
+
+class PersistentBrowser:
+    def __init__(
+        self,
+        vendor: str,
+        profiles_root: Path,
+        headless: bool = False,
+        channel: str | None = "msedge",
+    ):
+        self.vendor = vendor
+        self.profiles_root = profiles_root
+        self.headless = headless
+        self.channel = channel
+        self.playwright: Playwright | None = None
+        self.context: BrowserContext | None = None
+        self.page: Page | None = None
+
+    def __enter__(self) -> tuple[Playwright, BrowserContext, Page]:
+        profile_dir = self.profiles_root / self.vendor
+        profile_dir.mkdir(parents=True, exist_ok=True)
+
+        self.playwright = sync_playwright().start()
+
+        launch_options = {
+            "user_data_dir": str(profile_dir),
+            "headless": self.headless,
+            "accept_downloads": True,
+            "viewport": {"width": 1440, "height": 1000},
+        }
+
+        # Utilise Edge installé sur Windows.
+        # Pour Chrome, remplacez "msedge" par "chrome".
+        if self.channel:
+            launch_options["channel"] = self.channel
+
+        self.context = self.playwright.chromium.launch_persistent_context(
+            **launch_options
+        )
+
+        self.page = self.context.new_page()
+        return self.playwright, self.context, self.page
+
+    def __exit__(self, exc_type, exc, tb):
+        if self.context:
+            self.context.close()
+        if self.playwright:
+            self.playwright.stop()

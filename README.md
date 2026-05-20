@@ -1,0 +1,179 @@
+# Invoice Collector Web
+
+Collecteur semi-automatique de factures fournisseur depuis des portails web.
+
+Le projet ouvre un navigateur Chromium avec un profil persistant par fournisseur. Vous vous connectez une première fois manuellement, puis le script réutilise la session pour retrouver et télécharger les factures demandées.
+
+## Fournisseurs préconfigurés
+
+- Microsoft — 05/2026
+- OpenAI — 04/2026 et 05/2026
+- Google — 04/2026
+- OVHcloud — 05/2026
+- Adobe — 05/2026
+
+Les modules sont volontairement séparés par fournisseur, car les portails changent souvent et les sélecteurs devront probablement être ajustés après le premier essai.
+
+## Installation
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+playwright install chromium
+cp config.example.yaml config.yaml
+```
+
+Sur Windows PowerShell :
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+playwright install chromium
+copy config.example.yaml config.yaml
+```
+
+## Première utilisation
+
+Créez les profils navigateur :
+
+```bash
+invoice-collector init-profiles
+```
+
+Lancez la collecte :
+
+```bash
+invoice-collector collect
+```
+
+Pour chaque fournisseur, une fenêtre Chromium s’ouvre. Si le portail demande une connexion, un SSO ou un MFA, terminez la connexion dans la fenêtre, puis revenez au terminal et appuyez sur Entrée.
+
+Les factures téléchargées seront placées dans :
+
+```text
+downloads/<fournisseur>/<YYYY-MM>/
+```
+
+Un rapport sera généré ici :
+
+```text
+reports/manifest.csv
+```
+
+## Configuration
+
+Modifiez `config.yaml` :
+
+```yaml
+invoices:
+  openai:
+    url: "https://platform.openai.com/settings/organization/billing"
+    months:
+      - "2026-04"
+      - "2026-05"
+```
+
+Format de période obligatoire : `YYYY-MM`.
+
+## Commandes utiles
+
+Collecte avec chemins personnalisés :
+
+```bash
+invoice-collector collect \
+  --config config.yaml \
+  --downloads downloads \
+  --profiles browser_profiles \
+  --manifest reports/manifest.csv
+```
+
+Collecte sans pause manuelle, seulement si les sessions sont déjà valides :
+
+```bash
+invoice-collector collect --assume-logged-in
+```
+
+Mode headless, à éviter au début :
+
+```bash
+invoice-collector collect --headless --assume-logged-in
+```
+
+## Rapport CSV
+
+Colonnes générées :
+
+```csv
+vendor,period,status,file,sha256,message,collected_at
+```
+
+Statuts possibles :
+
+- `found` : une facture a été téléchargée ;
+- `missing` : aucune facture n’a été trouvée automatiquement ;
+- `error` : erreur technique ou changement du portail.
+
+## Adapter les sélecteurs
+
+Les collecteurs se trouvent dans :
+
+```text
+invoice_collector/vendors/
+```
+
+Exemple : `invoice_collector/vendors/openai.py`.
+
+La fonction clé est :
+
+```python
+save_first_matching_download(
+    page=page,
+    vendor=VENDOR,
+    period=period,
+    download_root=download_root,
+    link_text_candidates=[period, "Download", "Télécharger", "Invoice"],
+    fallback_message="...",
+)
+```
+
+Selon le portail, vous devrez peut-être remplacer cette logique générique par :
+
+- un clic sur une ligne de tableau ;
+- un filtre par date ;
+- un menu `...` puis `Download PDF` ;
+- une navigation vers une page de détails de facture.
+
+Pour trouver de bons sélecteurs :
+
+```bash
+playwright codegen https://example.com
+```
+
+## Sécurité
+
+Ce dépôt ne stocke pas les mots de passe. Il s’appuie sur des profils Chromium persistants dans `browser_profiles/`, ignorés par Git.
+
+Ne commitez jamais :
+
+- `browser_profiles/`
+- `downloads/`
+- `reports/`
+- `.env`
+- `config.yaml` si ce fichier contient des informations internes.
+
+## Limites connues
+
+- Les portails fournisseurs changent souvent.
+- Le MFA et le SSO peuvent bloquer une automatisation 100 % headless.
+- Certains fournisseurs offrent une API plus robuste que le scraping navigateur, notamment OVHcloud et certains services Google/Microsoft.
+- Les URLs de facturation dépendent parfois du type de compte : admin, cloud, workspace, enterprise, etc.
+
+## Prochaine étape recommandée
+
+1. Lancer `invoice-collector collect` en mode visible.
+2. Se connecter manuellement à chaque portail.
+3. Vérifier les fichiers téléchargés.
+4. Ajuster les modules fournisseur qui retournent `missing`.
+5. Remplacer progressivement le scraping par des APIs officielles lorsque disponibles.
