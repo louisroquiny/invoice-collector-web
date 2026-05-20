@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Collecte semi-automatique de factures fournisseur depuis des portails web avec Playwright."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "Internal Finance Automation" }]
 dependencies = [
   "playwright>=1.44.0",
@@ -23,6 +23,10 @@ dev = [
 
 [project.scripts]
 invoice-collector = "invoice_collector.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["invoice_collector*"]
+exclude = ["tests*", "downloads*", "reports*", "browser_profiles*", "vendors*"]
 
 [tool.ruff]
 line-length = 100
